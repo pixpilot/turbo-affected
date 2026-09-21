@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/pixpilot/turbo-affected/compare/v1.0.0...v1.1.0) (2026-09-21)
+
+
+### Features
+
+* **actions:** replace setup-project action with setup-pnpm-project ([dd3ded4](https://github.com/pixpilot/turbo-affected/commit/dd3ded45311f1c5fa1890da66fe674e9e809d16b))
+
 # 1.0.0 (2026-09-15)
 
 
