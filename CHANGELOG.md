@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/pixpilot/turbo-affected/compare/v1.1.0...v1.1.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* **release:** add notification step for release failure ([c227769](https://github.com/pixpilot/turbo-affected/commit/c227769655b86504495fc79d9f91d393d515cc2f))
+
 # [1.1.0](https://github.com/pixpilot/turbo-affected/compare/v1.0.0...v1.1.0) (2026-09-21)
 
 
