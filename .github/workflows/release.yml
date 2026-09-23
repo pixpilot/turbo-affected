@@ -49,38 +49,52 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
-# ======================================================================
-# If your branch is protected, remove the steps above and use this one instead.
-# Additional setup:
-# - See the following gist for detailed instructions:
-#   https://gist.github.com/0xernesto/a8065cce55940e6ccc523664a87ee9bc
-# - You must set up a GitHub App and add the following repository secrets:
-#     RELEASER_ID:            The App ID of your GitHub App
-#     RELEASER_PRIVATE_KEY:   The private key for your GitHub App
-# ======================================================================
-# steps:
-#   - name: Generate token
-#     id: generate-token
-#     uses: actions/create-github-app-token@v3
-#     with:
-#       client-id: ${{ secrets.RELEASER_ID }}
-#       private-key: ${{ secrets.RELEASER_PRIVATE_KEY }}
+  # ======================================================================
+  # If your branch is protected, remove the steps above and use this one instead.
+  # Additional setup:
+  # - See the following gist for detailed instructions:
+  #   https://gist.github.com/0xernesto/a8065cce55940e6ccc523664a87ee9bc
+  # - You must set up a GitHub App and add the following repository secrets:
+  #     RELEASER_ID:            The App ID of your GitHub App
+  #     RELEASER_PRIVATE_KEY:   The private key for your GitHub App
+  # ======================================================================
+  # steps:
+  #   - name: Generate token
+  #     id: generate-token
+  #     uses: actions/create-github-app-token@v3
+  #     with:
+  #       client-id: ${{ secrets.RELEASER_ID }}
+  #       private-key: ${{ secrets.RELEASER_PRIVATE_KEY }}
 
-#   - name: Checkout
-#     uses: actions/checkout@v4
-#     with:
-#       fetch-depth: 0
-#       persist-credentials: false
-#       ref: ${{ github.event.workflow_run.head_sha }}
-#       token: ${{ steps.generate-token.outputs.token }}
+  #   - name: Checkout
+  #     uses: actions/checkout@v4
+  #     with:
+  #       fetch-depth: 0
+  #       persist-credentials: false
+  #       ref: ${{ github.event.workflow_run.head_sha }}
+  #       token: ${{ steps.generate-token.outputs.token }}
 
-#   - name: Setup Project
-#     uses: pixpilot/github-actions/setup-pnpm-project@v1
+  #   - name: Setup Project
+  #     uses: pixpilot/github-actions/setup-pnpm-project@v1
 
-#   - name: Build dist
-#     run: npm run bundle
+  #   - name: Build dist
+  #     run: npm run bundle
 
-#   - name: Semantic Release
-#     uses: cycjimmy/semantic-release-action@v4
-#     env:
-#       GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+  #   - name: Semantic Release
+  #     uses: cycjimmy/semantic-release-action@v4
+  #     env:
+  #       GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+  notify:
+    name: Notify on Release Failure
+    needs: release
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Telegram notification
+        uses: pixpilot/notify-action@v1
+        with:
+          status: ${{ (github.event.workflow_run.conclusion == 'failure' || needs.release.result == 'failure') && 'failure' || (github.event.workflow_run.conclusion == 'cancelled' || needs.release.result == 'cancelled') && 'cancelled' || 'success' }}
+          telegram-bot-token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          telegram-chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
